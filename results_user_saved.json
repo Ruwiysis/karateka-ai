@@ -1,0 +1,24 @@
+{
+  "Mawashi_Geri": [
+    {
+      "timestamp": "2026-03-11T02:48:31.989538",
+      "accuracy": 97.4,
+      "breakdown": {
+        "Arms": 98.2,
+        "Legs": 98.0,
+        "Torso": 98.0
+      },
+      "grade": "S"
+    },
+    {
+      "timestamp": "2026-03-11T02:50:26.702853",
+      "accuracy": 98.7,
+      "breakdown": {
+        "Arms": 99.0,
+        "Legs": 99.2,
+        "Torso": 99.0
+      },
+      "grade": "S"
+    }
+  ]
+}

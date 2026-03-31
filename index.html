@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karateka — كاراتيكا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Noto+Kufi+Arabic:wght@400;600;700;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1a2340;--bg:#f0f2f7;--card:#ffffff;--border:#e4e7f0;
+  --text:#1a2340;--text2:#5a6480;--text3:#9ba4be;
+  --accent:#1536e8;--teal:#22c09a;--amber:#f5a623;--coral:#e84040;--sky:#4db8ff;
+  --sh:0 2px 12px rgba(26,35,64,.08);--sh-lg:0 8px 32px rgba(26,35,64,.14);
+  --c:#1536e8;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+.scr{display:none;min-height:100vh;}
+.scr.on{display:flex;}
+
+/* SIDEBAR SHELL */
+.app-shell{display:flex;min-height:100vh;width:100%;}
+.sidebar{width:256px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;padding:24px 14px;position:sticky;top:0;height:100vh;overflow:hidden;}
+.sb-logo{display:flex;align-items:center;gap:12px;padding:0 10px 24px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:18px;}
+.sb-logo img{width:42px;height:42px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.sb-brand{font-family:'Zen Dots',cursive;font-size:1.05rem;color:#fff;letter-spacing:2px;}
+.sb-sub{font-size:.6rem;color:rgba(255,255,255,.32);letter-spacing:3px;margin-top:2px;}
+.nav-list{display:flex;flex-direction:column;gap:3px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;cursor:pointer;transition:all .18s;font-size:.87rem;font-weight:500;color:rgba(255,255,255,.44);}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85);}
+.nav-item.active{background:#fff;color:var(--navy);}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;}
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;overflow-y:auto;}
+.hero{background:var(--navy);padding:26px 34px;display:flex;align-items:center;gap:18px;}
+.hero-icon{width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:1.55rem;flex-shrink:0;}
+.hero-h1{font-size:1.75rem;font-weight:700;color:#fff;letter-spacing:-.02em;}
+.hero-sub{font-size:.84rem;color:rgba(255,255,255,.4);margin-top:2px;}
+.page{padding:26px 34px;flex:1;}
+
+/* SCREEN 1 */
+#s1{background:var(--bg);}
+.sec-hd{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.sec-hd h2{font-size:1rem;font-weight:700;color:var(--text);white-space:nowrap;}
+.sec-line{flex:1;height:1px;background:var(--border);}
+.sec-ar{font-size:.75rem;color:var(--text3);font-family:'Noto Kufi Arabic',sans-serif;direction:rtl;white-space:nowrap;}
+.move-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.mcard{background:var(--card);border:1.5px solid var(--border);border-radius:20px;overflow:hidden;cursor:pointer;position:relative;display:flex;flex-direction:column;transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s,border-color .28s;animation:fadeUp .5s both;}
+.mcard:nth-child(1){animation-delay:.04s}.mcard:nth-child(2){animation-delay:.09s}.mcard:nth-child(3){animation-delay:.14s}.mcard:nth-child(4){animation-delay:.19s}
+.mcard:hover{transform:translateY(-5px);box-shadow:var(--sh-lg);border-color:var(--c);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.mcard-img{width:100%;height:190px;overflow:hidden;position:relative;background:linear-gradient(160deg,color-mix(in srgb,var(--c) 8%,#f8f9fc),#edf0f7);}
+.mcard-img img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block;padding:8px 8px 0;transition:transform .4s cubic-bezier(.22,1,.36,1);}
+.mcard:hover .mcard-img img{transform:scale(1.05);}
+.mcard-img-fade{position:absolute;bottom:0;left:0;right:0;height:55px;background:linear-gradient(transparent,var(--card));}
+.mcard-body{padding:15px 18px 18px;flex:1;display:flex;flex-direction:column;}
+.mcard-num{font-size:.57rem;letter-spacing:3px;color:var(--text3);margin-bottom:7px;font-weight:600;text-transform:uppercase;}
+.mcard-jp{font-family:'Zen Dots',cursive;font-size:.96rem;color:var(--text);letter-spacing:1px;margin-bottom:2px;}
+.mcard-ar{font-family:'Noto Kufi Arabic',sans-serif;font-size:.78rem;font-weight:600;direction:rtl;color:var(--text3);margin-bottom:10px;}
+.mcard-div{height:1px;background:var(--border);margin-bottom:10px;}
+.mcard-en{font-size:.79rem;color:var(--text2);line-height:1.55;flex:1;}
+.mcard-cta{display:inline-flex;align-items:center;gap:6px;margin-top:13px;padding:7px 15px;border-radius:999px;align-self:flex-start;background:color-mix(in srgb,var(--c) 9%,transparent);border:1px solid color-mix(in srgb,var(--c) 28%,transparent);font-size:.69rem;font-weight:700;letter-spacing:.6px;color:var(--c);transition:all .2s;}
+.mcard:hover .mcard-cta{background:color-mix(in srgb,var(--c) 17%,transparent);}
+.cta-arr{transition:transform .2s;}.mcard:hover .cta-arr{transform:translateX(4px);}
+
+/* SCREEN 2 */
+#s2{background:var(--bg);}
+.back-btn{display:inline-flex;align-items:center;gap:7px;padding:7px 15px;border-radius:999px;border:1px solid var(--border);background:var(--card);font-size:.82rem;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;margin-bottom:22px;box-shadow:var(--sh);}
+.back-btn:hover{border-color:var(--accent);color:var(--accent);}
+.back-btn svg{width:12px;height:12px;}
+.s2-layout{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;}
+.s2-info{display:flex;flex-direction:column;gap:14px;}
+.ttl-block{padding-bottom:16px;border-bottom:1px solid var(--border);}
+.ttl-jp{font-family:'Zen Dots',cursive;font-size:clamp(1.35rem,3vw,2rem);letter-spacing:2px;color:var(--text);line-height:1.15;margin-bottom:10px;}
+.ttl-strip{display:flex;flex-direction:column;border-left:3px solid var(--c);border-radius:0 8px 8px 0;padding:9px 13px;background:var(--card);box-shadow:var(--sh);}
+.ttl-ar{font-family:'Noto Kufi Arabic',sans-serif;font-size:.95rem;font-weight:700;direction:rtl;color:var(--text);margin-bottom:3px;}
+.ttl-en{font-size:.77rem;font-weight:500;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
+.info-panel{border-radius:13px;padding:15px 17px;background:var(--card);border:1px solid var(--border);box-shadow:var(--sh);}
+.info-lbl{font-size:.6rem;letter-spacing:3px;text-transform:uppercase;margin-bottom:9px;font-weight:700;}
+.info-txt{font-size:.84rem;color:var(--text2);line-height:1.78;}
+.info-ar{font-family:'Noto Kufi Arabic',sans-serif;direction:rtl;font-size:.81rem;color:var(--text3);line-height:1.88;margin-top:8px;}
+.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.tip-item{display:flex;align-items:flex-start;gap:7px;padding:8px 10px;border-radius:9px;background:var(--bg);border:1px solid var(--border);font-size:.76rem;color:var(--text2);line-height:1.4;}
+.tip-n{font-family:'Zen Dots',cursive;font-size:.88rem;flex-shrink:0;}
+.s2-visual{display:flex;flex-direction:column;gap:14px;}
+.vis-card{border-radius:18px;overflow:hidden;background:var(--card);box-shadow:var(--sh-lg);border:1px solid var(--border);}
+.vis-img-wrap{background:linear-gradient(160deg,color-mix(in srgb,var(--c) 7%,#f4f6fb),#e8ecf5);}
+.vis-img-wrap img{width:100%;height:250px;object-fit:contain;object-position:center bottom;display:block;padding:12px 12px 0;}
+.vis-caption{padding:13px 17px;border-top:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.vis-dot{width:8px;height:8px;border-radius:50%;background:var(--c);flex-shrink:0;}
+.vis-jp{font-family:'Zen Dots',cursive;font-size:.76rem;letter-spacing:1.5px;color:var(--text);}
+.vis-en{font-size:.69rem;color:var(--text3);margin-left:auto;}
+.vid-card{border-radius:18px;overflow:hidden;background:#0a0a12;box-shadow:var(--sh-lg);position:relative;}
+.vid-badge{position:absolute;top:10px;left:10px;z-index:2;background:rgba(0,0,0,.72);border-radius:999px;padding:3px 11px;font-size:.57rem;letter-spacing:2px;color:#fff;font-weight:600;}
+.vid-card video{width:100%;display:block;max-height:190px;object-fit:cover;}
+.begin-btn{width:100%;padding:16px;border-radius:13px;border:none;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.5px;cursor:pointer;color:#fff;position:relative;overflow:hidden;transition:all .28s cubic-bezier(.22,1,.36,1);}
+.begin-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.16),transparent);}
+.begin-btn:hover{transform:translateY(-3px);filter:brightness(1.1);}
+.bb-blue {background:linear-gradient(135deg,#1536e8,#0c1d9a);box-shadow:0 6px 24px rgba(21,54,232,.38);}
+.bb-gold {background:linear-gradient(135deg,#c8a020,#7a6000);box-shadow:0 6px 24px rgba(200,160,32,.32);}
+.bb-coral{background:linear-gradient(135deg,#c0303c,#7a1020);box-shadow:0 6px 24px rgba(192,48,60,.32);}
+.bb-mint {background:linear-gradient(135deg,#00b87c,#006644);box-shadow:0 6px 24px rgba(0,184,124,.32);}
+
+/* SCREEN 3 */
+#s3{background:#060c1c;flex-direction:column;}
+.a-bar{display:flex;align-items:center;gap:13px;flex-shrink:0;padding:12px 22px;background:rgba(6,12,28,.97);border-bottom:1px solid rgba(255,255,255,.07);position:sticky;top:0;z-index:40;}
+.a-bar-logo{display:flex;align-items:center;gap:9px;}
+.a-bar-logo img{width:30px;height:30px;border-radius:50%;object-fit:cover;}
+.a-bar-brand{font-family:'Zen Dots',cursive;font-size:.93rem;letter-spacing:2px;color:#fff;}
+.move-badge{display:flex;align-items:center;gap:8px;margin-left:4px;padding:5px 13px 5px 10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:999px;}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--c);flex-shrink:0;}
+.badge-name{font-family:'Zen Dots',cursive;font-size:.75rem;letter-spacing:1.5px;color:#fff;}
+.badge-ar{font-family:'Noto Kufi Arabic',sans-serif;font-size:.67rem;color:rgba(255,255,255,.3);direction:rtl;}
+.s-pill{margin-left:auto;font-size:.59rem;font-weight:700;padding:5px 13px;border-radius:999px;border:1px solid #2a2a2a;color:#444;letter-spacing:1.5px;transition:all .3s;}
+.s-pill.live{border-color:#22c09a;color:#22c09a;background:rgba(34,192,154,.08);}
+.s-pill.busy{border-color:var(--c);color:var(--c);background:rgba(21,54,232,.08);animation:pblink .65s infinite alternate;}
+.s-pill.done{border-color:#f5a623;color:#f5a623;background:rgba(245,166,35,.08);}
+@keyframes pblink{to{opacity:.28;}}
+.bar-back{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font-size:.76rem;font-weight:500;color:rgba(255,255,255,.5);cursor:pointer;transition:all .2s;}
+.bar-back:hover{background:rgba(255,255,255,.09);color:#fff;}
+.bar-back svg{width:11px;height:11px;}
+.a-body{flex:1;display:grid;grid-template-columns:1fr 320px;min-height:0;overflow:hidden;}
+.cam-col{position:relative;background:#040918;display:flex;flex-direction:column;overflow:hidden;}
+.cam-wrap{flex:1;position:relative;display:flex;align-items:stretch;overflow:hidden;}
+#camVideo{width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1);}
+#captureCanvas{display:none;}
+.cam-wrap::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:2;background:repeating-linear-gradient(0deg,rgba(0,0,0,.02) 0,rgba(0,0,0,.02) 1px,transparent 1px,transparent 4px);}
+.crn{position:absolute;width:26px;height:26px;pointer-events:none;z-index:5;}
+.crn.tl{top:14px;left:14px;border-top:2px solid var(--c);border-left:2px solid var(--c);}
+.crn.tr{top:14px;right:14px;border-top:2px solid var(--c);border-right:2px solid var(--c);}
+.crn.bl{bottom:56px;left:14px;border-bottom:2px solid var(--c);border-left:2px solid var(--c);}
+.crn.br{bottom:56px;right:14px;border-bottom:2px solid var(--c);border-right:2px solid var(--c);}
+.cam-chip{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(4,9,24,.88);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:5px 17px;backdrop-filter:blur(6px);display:none;}
+.cam-chip.on{display:block;}
+.chip-txt{font-family:'Zen Dots',cursive;font-size:.7rem;letter-spacing:2px;color:var(--c);}
+.cam-off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;background:#040918;z-index:4;transition:opacity .35s;}
+.cam-off.hidden{opacity:0;pointer-events:none;}
+.cam-off-icon{font-size:3rem;opacity:.13;}
+.cam-off p{font-size:.64rem;color:rgba(255,255,255,.16);letter-spacing:3px;text-transform:uppercase;font-weight:600;text-align:center;padding:0 18px;}
+.det-ring{position:absolute;inset:0;pointer-events:none;z-index:6;border:3px solid transparent;transition:border-color .25s;}
+.det-ring.ok{border-color:rgba(34,192,154,.5);}
+.body-gate{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .2s;z-index:15;}
+.body-gate.on{opacity:1;}
+.gate-box{background:rgba(4,9,24,.9);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:20px 30px;text-align:center;backdrop-filter:blur(10px);}
+.gate-icon{font-size:2rem;display:block;margin-bottom:9px;}
+.gate-msg{font-size:.73rem;font-weight:600;letter-spacing:1.5px;color:rgba(255,255,255,.62);line-height:1.65;}
+.gate-msg.ok{color:#22c09a;}
+.cov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .1s;z-index:22;}
+.cov.on{opacity:1;}
+.cov-bg{position:absolute;inset:0;background:rgba(3,8,22,.74);backdrop-filter:blur(2px);}
+.cov-in{position:relative;z-index:1;text-align:center;}
+.cov-pre{font-size:.67rem;font-weight:700;letter-spacing:8px;color:rgba(255,255,255,.36);text-transform:uppercase;}
+.cov-num{font-family:'Zen Dots',cursive;font-size:clamp(7rem,17vw,14rem);line-height:.85;text-shadow:0 0 80px currentColor,0 4px 40px rgba(0,0,0,.95);animation:cpop .72s cubic-bezier(.22,1,.36,1);}
+@keyframes cpop{0%{transform:scale(2.6);opacity:0}36%{transform:scale(.88)}100%{transform:scale(1);opacity:1}}
+.gov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .08s;z-index:22;}
+.gov.on{opacity:1;}
+.gov-bg{position:absolute;inset:0;background:rgba(3,8,22,.55);}
+.gov-txt{position:relative;z-index:1;font-family:'Zen Dots',cursive;font-size:clamp(5rem,13vw,11rem);color:#22c09a;text-shadow:0 0 120px rgba(34,192,154,.95),0 4px 60px rgba(0,0,0,.95);animation:goSlam .4s cubic-bezier(.22,1,.36,1);}
+@keyframes goSlam{0%{transform:scale(.1) rotate(-18deg);opacity:0}60%{transform:scale(1.1) rotate(1.5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.rec-ribbon{position:absolute;bottom:0;left:0;right:0;z-index:18;opacity:0;transition:opacity .25s;pointer-events:none;}
+.rec-ribbon.on{opacity:1;}
+.rec-inner{background:linear-gradient(transparent,rgba(3,8,22,.96));padding:28px 18px 14px;}
+.rec-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
+.rec-lbl{display:flex;align-items:center;gap:7px;font-size:.63rem;font-weight:700;letter-spacing:3px;color:rgba(255,255,255,.58);text-transform:uppercase;}
+.rec-dot{width:7px;height:7px;border-radius:50%;background:#e84040;animation:rdot .55s infinite alternate;}
+@keyframes rdot{to{opacity:.12;}}
+.rec-ct{font-family:'Zen Dots',cursive;font-size:.8rem;color:rgba(255,255,255,.48);letter-spacing:1px;}
+.rec-bg{width:100%;height:5px;background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden;}
+.rec-fill{height:100%;width:0%;border-radius:999px;transition:width .1s linear;background:linear-gradient(90deg,var(--c),var(--sky));box-shadow:0 0 10px var(--c);}
+.a-side{background:#0b1122;border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;overflow-y:auto;padding:16px;gap:12px;}
+.acard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:13px;padding:15px;}
+.acard-lbl{font-size:.56rem;font-weight:700;letter-spacing:3px;color:rgba(255,255,255,.24);text-transform:uppercase;margin-bottom:11px;}
+.cam-msg{font-size:.71rem;font-weight:600;color:var(--c);text-align:center;min-height:20px;letter-spacing:.4px;padding:8px;border-radius:9px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);line-height:1.5;}
+.btn-begin{width:100%;padding:14px;border-radius:11px;border:none;font-family:'DM Sans',sans-serif;font-size:.91rem;font-weight:700;letter-spacing:.4px;color:#fff;cursor:pointer;position:relative;overflow:hidden;margin-bottom:8px;transition:all .24s cubic-bezier(.22,1,.36,1);}
+.btn-begin::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.14),transparent);}
+.btn-begin:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.12);}
+.btn-begin:disabled{opacity:.25;cursor:not-allowed;}
+.btn-again{width:100%;padding:12px;border-radius:11px;border:none;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;color:#fff;cursor:pointer;transition:all .2s;display:none;background:linear-gradient(135deg,#00b87c,#006644);box-shadow:0 4px 16px rgba(0,100,60,.3);}
+.btn-again:hover{transform:translateY(-2px);filter:brightness(1.1);}
+.res-wrap{display:none;animation:fadeUp .36s both;}
+.res-pct-block{text-align:center;padding:6px 0 12px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:12px;}
+.res-pct{font-family:'Zen Dots',cursive;font-size:clamp(2.4rem,5vw,3.2rem);line-height:1;transition:color .5s;color:#fff;}
+.res-sub{font-size:.54rem;font-weight:700;letter-spacing:4px;color:rgba(255,255,255,.25);margin-top:2px;}
+.res-grade{display:inline-block;font-family:'Zen Dots',cursive;font-size:1.2rem;padding:3px 13px;border-radius:8px;margin-top:7px;letter-spacing:3px;}
+.bars{display:flex;flex-direction:column;gap:8px;}
+.bar-row{display:flex;flex-direction:column;gap:4px;}
+.bar-hd{display:flex;justify-content:space-between;font-size:.65rem;color:rgba(255,255,255,.35);font-weight:600;}
+.bar-bg{height:5px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:999px;transition:width 1.2s cubic-bezier(.22,1,.36,1);}
+.fb-en{font-size:.75rem;color:rgba(255,255,255,.28);text-align:center;margin-top:10px;font-style:italic;line-height:1.5;}
+.fb-ar{font-family:'Noto Kufi Arabic',sans-serif;font-size:.75rem;color:rgba(255,255,255,.2);direction:rtl;text-align:center;margin-top:5px;line-height:1.6;}
+.comp-wrap{display:none;margin-top:10px;border-top:1px solid rgba(255,255,255,.07);padding-top:10px;}
+.comp-wrap.on{display:block;}
+.comp-lbl{font-size:.54rem;font-weight:700;letter-spacing:3px;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:7px;}
+.comp-row{display:flex;justify-content:space-between;align-items:center;}
+.comp-prev{font-size:.67rem;color:rgba(255,255,255,.28);}
+.comp-d{font-family:'Zen Dots',cursive;font-size:1rem;}
+.comp-d.up{color:#22c09a;}.comp-d.down{color:#e84040;}.comp-d.same{color:rgba(255,255,255,.3);}
+.hist-wrap{display:none;margin-top:8px;}
+.hist-wrap.on{display:block;}
+.hist-lbl{font-size:.54rem;font-weight:700;letter-spacing:3px;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:7px;}
+.hist-bars{display:flex;align-items:flex-end;gap:4px;height:40px;}
+.hist-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;}
+.hist-b{width:100%;border-radius:3px 3px 0 0;min-height:3px;transition:height .8s;}
+.hist-g{font-family:'Zen Dots',cursive;font-size:.49rem;color:rgba(255,255,255,.3);}
+
+@media(max-width:700px){
+  .sidebar{display:none;}.move-grid{grid-template-columns:1fr;}.s2-layout{grid-template-columns:1fr;}
+  .a-body{grid-template-columns:1fr;}.a-side{display:none;}.page{padding:16px;}.hero{padding:20px 16px;}
+  .cov-num{font-size:clamp(7rem,28vw,11rem);}
+}
+@media(min-width:701px) and (max-width:960px){
+  .sidebar{width:200px;}.s2-layout{grid-template-columns:1fr;}.a-body{grid-template-columns:1fr 260px;}
+}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1 — MOVE SELECTION -->
+<div class="scr on" id="s1">
+  <div class="app-shell">
+    <nav class="sidebar">
+      <div class="sb-logo">
+        <img src="/static/images/logo.png" alt="Karateka">
+        <div><div class="sb-brand">Karateka</div><div class="sb-sub">كاراتيكا</div></div>
+      </div>
+      <div class="nav-list">
+        <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Training</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Techniques</div>
+        <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Progress</div>
+      </div>
+    </nav>
+    <div class="main">
+      <div class="hero"><div class="hero-icon">🥋</div><div><div class="hero-h1">Choose Your Move</div><div class="hero-sub">اختر حركتك — Select a technique to assess</div></div></div>
+      <div class="page">
+        <div class="sec-hd"><h2>Karate Techniques</h2><div class="sec-line"></div><div class="sec-ar">تقنيات الكاراتيه</div></div>
+        <div class="move-grid" id="moveGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 — TECHNIQUE PREVIEW -->
+<div class="scr" id="s2">
+  <div class="app-shell">
+    <nav class="sidebar">
+      <div class="sb-logo"><img src="/static/images/logo.png" alt="Karateka"><div><div class="sb-brand">Karateka</div><div class="sb-sub">كاراتيكا</div></div></div>
+      <div class="nav-list">
+        <div class="nav-item" onclick="go('s1')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Home</div>
+        <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Techniques</div>
+      </div>
+    </nav>
+    <div class="main">
+      <div class="hero"><div class="hero-icon" id="s2icon">🦵</div><div><div class="hero-h1" id="s2title">Technique Preview</div><div class="hero-sub" id="s2sub">Study the move before your assessment</div></div></div>
+      <div class="page">
+        <button class="back-btn" onclick="go('s1')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to moves</button>
+        <div class="s2-layout">
+          <div class="s2-info" id="s2info"></div>
+          <div class="s2-visual" id="s2visual"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3 — CAMERA ASSESSMENT -->
+<div class="scr" id="s3">
+  <div class="a-bar">
+    <div class="a-bar-logo"><img src="/static/images/logo.png" alt="Karateka"><span class="a-bar-brand">Karateka</span></div>
+    <div class="move-badge"><div class="badge-dot" id="badgeDot"></div><span class="badge-name" id="badgeName">—</span><span class="badge-ar" id="badgeAr"></span></div>
+    <span class="s-pill" id="pill">READY</span>
+    <button class="bar-back" onclick="backToMenu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back</button>
+  </div>
+  <div class="a-body">
+    <div class="cam-col">
+      <div class="cam-wrap" id="camWrap">
+        <video id="camVideo" autoplay playsinline muted></video>
+        <canvas id="captureCanvas"></canvas>
+        <div class="crn tl"></div><div class="crn tr"></div><div class="crn bl"></div><div class="crn br"></div>
+        <div class="cam-off" id="camOff"><div class="cam-off-icon">📷</div><p>Press Begin Assessment<br>to activate camera</p></div>
+        <div class="det-ring" id="detRing"></div>
+        <div class="cam-chip" id="camChip"><span class="chip-txt" id="chipTxt"></span></div>
+        <div class="body-gate" id="bodyGate"><div class="gate-box"><span class="gate-icon">🕴️</span><div class="gate-msg" id="gateMsg">Stand back — show your WHOLE body in frame</div></div></div>
+        <div class="cov" id="cov"><div class="cov-bg"></div><div class="cov-in"><div class="cov-pre">GET READY</div><div class="cov-num" id="covNum" style="color:#4db8ff">3</div></div></div>
+        <div class="gov" id="gov"><div class="gov-bg"></div><div class="gov-txt">GO!</div></div>
+        <div class="rec-ribbon" id="recRibbon"><div class="rec-inner"><div class="rec-top"><div class="rec-lbl"><div class="rec-dot"></div>RECORDING</div><div class="rec-ct" id="recCt">0 / 80</div></div><div class="rec-bg"><div class="rec-fill" id="recFill"></div></div></div></div>
+      </div>
+    </div>
+    <div class="a-side">
+      <div class="acard"><div class="acard-lbl">Status</div><div class="cam-msg" id="camMsg">Press Begin Assessment to start</div></div>
+      <div class="acard">
+        <div class="acard-lbl">Controls</div>
+        <button class="btn-begin bb-blue" id="btnBegin" onclick="startAssessment()">▶ Begin Assessment</button>
+        <button class="btn-again" id="btnAgain" onclick="trainAgain()">↺ Train Again</button>
+      </div>
+      <div class="acard res-wrap" id="resWrap">
+        <div class="acard-lbl">Your Result</div>
+        <div class="res-pct-block"><div class="res-pct" id="resPct">—</div><div class="res-sub">ACCURACY</div><div class="res-grade" id="resGrade">—</div></div>
+        <div class="bars" id="resBars"></div>
+        <div class="fb-en" id="fbEn"></div><div class="fb-ar" id="fbAr"></div>
+        <div class="comp-wrap" id="compWrap"><div class="comp-lbl">vs. Last Attempt</div><div class="comp-row"><span class="comp-prev" id="compPrev"></span><span class="comp-d" id="compDelta"></span></div></div>
+        <div class="hist-wrap" id="histWrap"><div class="hist-lbl">Session History</div><div class="hist-bars" id="histBars"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const MOVES=[
+  {key:'Mae_Geri',jp:'Mae Geri',ar:'ماي غيري',en:'Front Kick',color:'#1536e8',cls:'bb-blue',img:'/static/images/mae-geri.jpg',vid:'/static/videos/mae-geri.mp4',num:'01',desc:'A direct front kick delivered with the ball of the foot. Drive the knee high, snap the hip forward, extend and retract fast.',desc_ar:'ركلة أمامية مباشرة بكرة القدم. ارفع الركبة عالياً، ادفع الورك للأمام، امدد الساق وارجعها سريعاً.',tips:['Chamber the knee high','Drive the hip forward','Strike with ball of foot','Snap the leg back fast']},
+  {key:'Mawashi_Geri',jp:'Mawashi Geri',ar:'ماواشي غيري',en:'Roundhouse Kick',color:'#c8a020',cls:'bb-gold',img:'/static/images/mawashi-geri.jpg',vid:'/static/videos/mawashi-geri.mp4',num:'02',desc:'A circular kick targeting the head or ribs. Pivot on the standing foot, rotate the hip fully, and strike with the instep.',desc_ar:'ركلة دائرية تستهدف الرأس أو الأضلاع. استدر على القدم الثابتة، دوّر الورك بالكامل، واضرب بظاهر القدم.',tips:['Pivot on standing foot','Rotate hip fully','Strike with instep','Keep guard up throughout']},
+  {key:'Seiken_Chudan_Tsuki',jp:'Seiken Chudan Tsuki',ar:'سيكين تشودان تسوكي',en:'Mid-Level Punch',color:'#c0303c',cls:'bb-coral',img:'/static/images/seiken-chudan-tsuki.jpg',vid:'/static/videos/seiken-chudan-tsuki.mp4',num:'03',desc:'A straight punch to the mid-section. Drive from the back foot, rotate the hip, extend with a tight fist, snap back to guard.',desc_ar:'لكمة مستقيمة للجزء الأوسط. ادفع من القدم الخلفية، دوّر الورك، مدّد بقبضة مشدودة وارجع للحماية.',tips:['Drive from back leg','Rotate hip into punch','Keep fist tight','Return to guard fast']},
+  {key:'Seiken_Jodan_Uke',jp:'Seiken Jodan Uke',ar:'سيكين جودان أوكي',en:'Upper Block',color:'#00b87c',cls:'bb-mint',img:'/static/images/seiken-jodan-uke.jpg',vid:'/static/videos/seiken-jodan-uke.mp4',num:'04',desc:'A rising block deflecting high attacks. Raise the forearm sharply from inside to outside, angled above the forehead.',desc_ar:'حجب صاعد يصدّ الهجمات العليا. ارفع الساعد بحدة من الداخل للخارج، مائلاً فوق الجبهة لحماية الرأس.',tips:['Chamber from hip','Block above eye level','Angle forearm at 45°','Counter immediately after']},
+];
+const GC={S:'#22c09a',A:'#4db8ff',B:'#f5a623',C:'#e87040',D:'#e84040'};
+const ICONS=['🦵','🌀','👊','🛡️'];
+
+/* SCREEN 1 */
+function buildCards(){
+  document.getElementById('moveGrid').innerHTML=MOVES.map((m,i)=>`
+    <div class="mcard" style="--c:${m.color}" onclick="openPreview(${i})">
+      <div class="mcard-img"><img src="${m.img}" alt="${m.jp}" loading="lazy"><div class="mcard-img-fade"></div></div>
+      <div class="mcard-body">
+        <div class="mcard-num">Technique ${m.num}</div>
+        <div class="mcard-jp">${m.jp}</div>
+        <div class="mcard-ar">${m.ar}</div>
+        <div class="mcard-div"></div>
+        <div class="mcard-en">${m.en} — ${m.desc.slice(0,58)}…</div>
+        <div class="mcard-cta">Begin Assessment <span class="cta-arr">→</span></div>
+      </div>
+    </div>`).join('');
+}
+
+/* SCREEN 2 */
+let curIdx=0;
+function openPreview(idx){
+  curIdx=idx; const m=MOVES[idx]; setColor(m.color);
+  document.getElementById('s2icon').textContent=ICONS[idx];
+  document.getElementById('s2title').textContent=m.jp;
+  document.getElementById('s2sub').textContent=m.en+' · '+m.ar;
+  document.getElementById('s2info').innerHTML=`
+    <div class="ttl-block"><div class="ttl-jp">${m.jp}</div><div class="ttl-strip" style="--c:${m.color}"><div class="ttl-ar">${m.ar}</div><div class="ttl-en">${m.en}</div></div></div>
+    <div class="info-panel"><div class="info-lbl" style="color:${m.color}">Description — الوصف</div><div class="info-txt">${m.desc}</div><div class="info-ar">${m.desc_ar}</div></div>
+    <div class="info-panel"><div class="info-lbl" style="color:${m.color}">Key Points — النقاط الأساسية</div><div class="tips-grid">${m.tips.map((t,i)=>`<div class="tip-item"><span class="tip-n" style="color:${m.color}">${i+1}</span><span>${t}</span></div>`).join('')}</div></div>
+    <button class="begin-btn ${m.cls}" onclick="openAssess(${idx})">▶ Begin Assessment — ابدأ التقييم</button>`;
+  document.getElementById('s2visual').innerHTML=`
+    <div class="vis-card"><div class="vis-img-wrap" style="--c:${m.color}"><img src="${m.img}" alt="${m.jp}"></div><div class="vis-caption"><div class="vis-dot" style="background:${m.color}"></div><span class="vis-jp">${m.jp}</span><span class="vis-en">${m.en}</span></div></div>
+    <div class="vid-card"><div class="vid-badge">DEMO VIDEO</div><video src="${m.vid}" autoplay loop muted playsinline></video></div>`;
+  go('s2');
+}
+
+/* SCREEN 3 */
+function openAssess(idx){
+  curIdx=idx; const m=MOVES[idx]; setColor(m.color);
+  document.getElementById('badgeDot').style.background=m.color;
+  document.getElementById('badgeName').textContent=m.jp;
+  document.getElementById('badgeAr').textContent=m.ar;
+  document.getElementById('chipTxt').textContent=m.jp;
+  document.getElementById('btnBegin').className=`btn-begin ${m.cls}`;
+  go('s3');
+}
+
+/* ASSESSMENT ENGINE */
+let stream=null,loopTimer=null,phase='idle',capturedVecs=[],bodyStreak=0;
+const FRAME_TARGET=80;
+
+async function startAssessment(){
+  const btn=document.getElementById('btnBegin');
+  btn.disabled=true;
+  capturedVecs=[];bodyStreak=0;phase='idle';
+  setMsg('Starting camera…');setPill('busy','STARTING');
+  document.getElementById('resWrap').style.display='none';
+  document.getElementById('btnAgain').style.display='none';
+  document.getElementById('recRibbon').classList.remove('on');
+  document.getElementById('recFill').style.width='0%';
+  hideOverlays();showBodyGate(false);
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1280},height:{ideal:720}},audio:false});
+  }catch(e){
+    setMsg('⚠ Camera access denied. Allow camera and try again.');
+    setPill('','ERROR');btn.disabled=false;return;
+  }
+  const vid=document.getElementById('camVideo');
+  vid.srcObject=stream;await vid.play();
+  document.getElementById('camOff').classList.add('hidden');
+  document.getElementById('camChip').classList.add('on');
+  phase='preview';setPill('busy','DETECTING');
+  setMsg('Stand back — show your WHOLE body in frame');
+  showBodyGate(true,false);
+  if(loopTimer)clearInterval(loopTimer);
+  loopTimer=setInterval(captureLoop,200);
+}
+
+async function captureLoop(){
+  if(phase==='idle'||phase==='done'||phase==='countdown')return;
+  const vid=document.getElementById('camVideo');
+  const canvas=document.getElementById('captureCanvas');
+  if(!vid.videoWidth)return;
+  canvas.width=vid.videoWidth;canvas.height=vid.videoHeight;
+  const ctx=canvas.getContext('2d');
+  ctx.save();ctx.scale(-1,1);ctx.drawImage(vid,-canvas.width,0);ctx.restore();
+  const b64=canvas.toDataURL('image/jpeg',0.65);
+  let resp;
+  try{
+    const r=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({frame:b64})});
+    resp=await r.json();
+  }catch(e){return;}
+  const bodyOk=resp.body_visible,vec=resp.vector;
+  document.getElementById('detRing').classList.toggle('ok',bodyOk);
+  if(phase==='preview'){
+    showBodyGate(true,bodyOk);
+    if(bodyOk){bodyStreak++;if(bodyStreak>=4){phase='countdown';showBodyGate(false);bodyStreak=0;runCountdown();}}
+    else{bodyStreak=0;}
+  }
+  if(phase==='capturing'&&vec){
+    capturedVecs.push(vec);
+    const pct=capturedVecs.length/FRAME_TARGET*100;
+    document.getElementById('recFill').style.width=pct+'%';
+    document.getElementById('recCt').textContent=`${capturedVecs.length} / ${FRAME_TARGET}`;
+    if(capturedVecs.length>=FRAME_TARGET){
+      phase='done';clearInterval(loopTimer);loopTimer=null;
+      document.getElementById('recRibbon').classList.remove('on');
+      setPill('done','DONE');setMsg('Calculating your score…');
+      await scoreSession();
+    }
+  }
+}
+
+async function runCountdown(){
+  const cols={3:'#4db8ff',2:'#1536e8',1:'#22c09a'};
+  setPill('busy','COUNTDOWN');setMsg('Get ready!');
+  for(const n of[3,2,1]){showCount(n,cols[n]);await sleep(1000);}
+  hideCount();showGo();await sleep(500);
+  phase='capturing';capturedVecs=[];
+  document.getElementById('recRibbon').classList.add('on');
+  setPill('busy','RECORDING');setMsg('GO! Perform your move!');
+}
+
+async function scoreSession(){
+  try{
+    const r=await fetch('/api/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({move:MOVES[curIdx].key,vectors:capturedVecs})});
+    const d=await r.json();
+    document.getElementById('btnBegin').disabled=false;
+    document.getElementById('btnAgain').style.display='block';
+    renderResult(d);
+  }catch(e){setMsg('⚠ Server error. Try again.');document.getElementById('btnBegin').disabled=false;}
+}
+
+async function trainAgain(){
+  stopCamera();
+  document.getElementById('resWrap').style.display='none';
+  document.getElementById('btnAgain').style.display='none';
+  phase='idle';await startAssessment();
+}
+
+function stopCamera(){
+  if(loopTimer){clearInterval(loopTimer);loopTimer=null;}
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+  document.getElementById('camVideo').srcObject=null;
+}
+
+function backToMenu(){
+  stopCamera();phase='idle';
+  document.getElementById('camOff').classList.remove('hidden');
+  document.getElementById('camChip').classList.remove('on');
+  document.getElementById('resWrap').style.display='none';
+  document.getElementById('btnAgain').style.display='none';
+  document.getElementById('btnBegin').disabled=false;
+  document.getElementById('recRibbon').classList.remove('on');
+  document.getElementById('detRing').classList.remove('ok');
+  hideOverlays();showBodyGate(false);
+  setPill('live','READY');setMsg('Press Begin Assessment to start');
+  go('s1');
+}
+
+/* RENDER RESULT */
+function renderResult(d){
+  const acc=d.accuracy,g=d.grade,col=GC[g]||'#fff';
+  document.getElementById('resWrap').style.display='block';
+  const pe=document.getElementById('resPct');pe.textContent=acc+'%';pe.style.color=col;
+  const gb=document.getElementById('resGrade');gb.textContent=g;gb.style.background=col+'22';gb.style.color=col;gb.style.border=`1px solid ${col}44`;
+  document.getElementById('fbEn').textContent=d.message_en||'';
+  document.getElementById('fbAr').textContent=d.message_ar||'';
+  const barsEl=document.getElementById('resBars');barsEl.innerHTML='';
+  for(const[part,val]of Object.entries(d.breakdown||{})){
+    const c=val>=75?'#22c09a':val>=50?'#4db8ff':'#e84040';
+    barsEl.innerHTML+=`<div class="bar-row"><div class="bar-hd"><span>${part}</span><span>${val}%</span></div><div class="bar-bg"><div class="bar-fill" style="width:0%;background:${c}" data-w="${val}"></div></div></div>`;
+  }
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{document.querySelectorAll('.bar-fill').forEach(el=>el.style.width=el.dataset.w+'%');}));
+  const cw=document.getElementById('compWrap');
+  if(d.comparison){
+    cw.classList.add('on');
+    const delta=d.comparison.delta,sign=delta>0?'+':'',cls=delta>0?'up':delta<0?'down':'same';
+    document.getElementById('compPrev').textContent=`Previous: ${d.comparison.prev_accuracy}% (${d.comparison.prev_grade}) · ${d.comparison.prev_date}`;
+    const de=document.getElementById('compDelta');de.textContent=`${sign}${delta}%`;de.className=`comp-d ${cls}`;
+  }else{cw.classList.remove('on');}
+  const hw=document.getElementById('histWrap');
+  if(d.history&&d.history.length>1){
+    hw.classList.add('on');
+    const hb=document.getElementById('histBars');hb.innerHTML='';
+    d.history.slice(-6).forEach(s=>{
+      const hcol=GC[s.grade]||'#4a6090';
+      hb.innerHTML+=`<div class="hist-col"><div class="hist-b" style="height:${Math.max(4,s.accuracy*.4)}px;background:${hcol}20;border:1px solid ${hcol}55;"></div><div class="hist-g" style="color:${hcol}">${s.grade}</div></div>`;
+    });
+  }else{hw.classList.remove('on');}
+}
+
+/* UI HELPERS */
+function setColor(c){document.documentElement.style.setProperty('--c',c);}
+function showBodyGate(show,detected){
+  const el=document.getElementById('bodyGate'),msg=document.getElementById('gateMsg');
+  if(show){el.classList.add('on');if(detected){msg.textContent='✓ Body detected — get ready!';msg.className='gate-msg ok';}else{msg.textContent='Stand back — show your WHOLE body in frame';msg.className='gate-msg';}}
+  else{el.classList.remove('on');}
+}
+function showCount(n,color){
+  const num=document.getElementById('covNum'),ov=document.getElementById('cov');
+  num.style.animation='none';void num.offsetWidth;num.style.animation='cpop .72s cubic-bezier(.22,1,.36,1)';
+  num.style.color=color;num.textContent=n;ov.classList.add('on');
+  document.getElementById('gov').classList.remove('on');
+}
+function hideCount(){document.getElementById('cov').classList.remove('on');}
+function showGo(){
+  hideCount();const ov=document.getElementById('gov');
+  ov.classList.remove('on');void ov.offsetWidth;ov.classList.add('on');
+  setTimeout(()=>ov.classList.remove('on'),1300);
+}
+function hideOverlays(){document.getElementById('cov').classList.remove('on');document.getElementById('gov').classList.remove('on');}
+function go(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);}
+function setPill(cls,txt){const el=document.getElementById('pill');el.className='s-pill '+cls;el.textContent=txt;}
+function setMsg(txt){document.getElementById('camMsg').textContent=txt;}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+/* INIT */
+buildCards();
+fetch('/api/moves').then(()=>setPill('live','READY')).catch(()=>setPill('','OFFLINE'));
+</script>
+</body>
+</html>
