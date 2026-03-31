@@ -7,7 +7,9 @@ Compatible with: mediapipe==0.10.14 (pinned — newer versions break mp.solution
 Run locally:   python server.py
 Deploy:        Railway (railway.json auto-configures everything)
 """
-
+import os
+os.environ["MEDIAPIPE_DISABLE_GPU"] = "1"
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import mediapipe as mp
@@ -16,6 +18,7 @@ import pickle, os, json, base64, cv2
 import pandas as pd
 from datetime import datetime
 from sklearn.metrics.pairwise import cosine_similarity
+
 
 BASE_DIR     = os.path.dirname(os.path.abspath(__file__))
 MODEL_FILE   = os.path.join(BASE_DIR, "hackarate_model.pkl")
